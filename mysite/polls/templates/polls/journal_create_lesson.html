@@ -1,0 +1,96 @@
+{% load static %}
+<!doctype html>
+	<html lang="en">
+	  <head>
+        <head>
+            <!-- Обязательные метатеги -->
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            
+            <!-- Bootstrap CSS -->
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+        
+            <title>Создание занятия</title>
+        </head>
+	  </head>
+	  <body>
+        <div class="bg-info container-fluid" style="height:54px">
+            <form method="post">
+              <a class="btn btn-primary" href="/journal" role="button" style="margin-left: 830px; margin-top: 8px;">Вернуться на главную страницу</a>
+              <a class="btn btn-danger" href="/logoutpage" role="button" style="float: right; margin-top: 8px;">Выход</a>
+            </form>
+        </div>
+        {% if error %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>{{error}}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+        {% if success %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>{{success}}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+        <form method="post" style="margin-top: 20px;">
+            {% csrf_token %}
+            <div class="container" style="margin-left: auto; margin-right: auto; width: 30%">
+              <div class="mb-3" style="margin-left: 75px;">
+                <h2>Создание нового занятия</h2>
+              </div>
+              <div class="mb-3">
+                <label for="inputname" class="form-label" style="margin-left: 250px">Дата</label>
+                <input name ="RecordDate" type="date" class="form-control" id="InputRecordDate" min="{{min}}" max="{{max}}">
+              </div>
+              <div class="mb-3" style="margin-left: 100px;">
+                <p style="margin-left: 100px;">Время занятия</p>
+                {% for time in times %}
+                  <div class="mb-3 form-check" style="margin-left: 110px">
+                    <label class="form-check-label" for="timecheck{{time.id}}">{{time.Interval}}</label>
+                    <input name="timecheck{{time.id}}" type="checkbox" class="form-check-input" id="timecheck{{time.id}}">
+                  </div>
+                {% endfor %}
+              </div>
+              <div class="mb-3">
+                <label for="SelectCourse" class="form-label">Курс</label>
+                <select name = "course" class="form-control" id="SelectCourse">
+                  {% for course_ in courses %}
+                    {% if course_.CourseNumber == 1 %}
+                      <option value="{{course_.id}}">I</option>
+                    {% elif course_.CourseNumber == 2 %}
+                      <option value="{{course_.id}}">II</option>
+                    {% elif course_.CourseNumber == 3 %}
+                      <option value="{{course_.id}}">III</option>
+                    {% elif course_.CourseNumber == 4 %}
+                      <option value="{{course_.id}}">IV</option>
+                    {% elif course_.CourseNumber == 5 %}
+                      <option value="{{course_.id}}">м I</option>
+                    {% elif course_.CourseNumber == 6 %}
+                      <option value="{{course_.id}}">м II</option>
+                    {% elif course_.CourseNumber == 7 %}
+                      <option value="{{course_.id}}">асп</option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="inputgrpoups" class="form-label">Группы</label>
+                <div>
+                  <small>Введите номер группы в формате: 42, 147, и т.д.</small>
+                </div>
+                <input name="lessongroups" type="text" class="form-control" id="inputgroups" aria-describedby="groupsform" value="{{lesson.groups_number}}" required>
+              </div>
+              <div class="mb-3">
+                <label for="SelectLessonType" class="form-label">Тип занятия</label>
+                <select name = "lessontype" class="form-control" id="SelectLessonType">
+                  {% for type in types %}
+                    <option value="{{type.id}}">{{type.TypeName}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary" style="margin-left: 200px; margin-top: 10px">Создать занятие</button>
+            </div>
+        </form>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+	  </body>
+	</html>

@@ -1,0 +1,75 @@
+{% load static %}
+<!doctype html>
+	<html lang="en">
+	  <head>
+        <head>
+            <!-- Обязательные метатеги -->
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            
+            <!-- Bootstrap CSS -->
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+        
+            <title>Создание пользователя</title>
+        </head>
+	  </head>
+	  <body>
+        <div class="bg-warning container-fluid" style="height:54px">
+            <form method="post">
+              <a class="btn btn-primary" href="/admin/users" role="button" style="float: left; margin-top: 8px;">Назад</a>
+              <a class="btn btn-primary" href="/admin/homepage" role="button" style="margin-left: 750px; margin-top: 8px;">Вернуться на главную страницу</a>
+              <a class="btn btn-danger" href="/logoutpage" role="button" style="float: right; margin-top: 8px;">Выход</a>
+            </form>
+        </div>
+        {% if error %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>{{error}}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+        {% if success %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>{{success}}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+        <form method="post" style="margin-top: 100px;">
+            {% csrf_token %}
+            <div class="container" style="margin-left: auto; margin-right: auto; width: 30%">
+              <div class="mb-3" style="width: 100%; text-align: center;">
+                <h2>Создание нового пользователя</h2>
+              </div>
+              <div class="mb-3">
+                <label for="inputname" class="form-label" style="margin-left: 250px">Имя</label>
+                <input name="name" type="text" class="form-control" id="inputname" aria-describedby="nameform" required>
+              </div>
+              <div class="mb-3">
+                  <label for="inputsurname" class="form-label" style="margin-left: 235px">Фамилия</label>
+                  <input name="surname" type="text" class="form-control" id="inputsurname" aria-describedby="surnameform" required>
+              </div>
+              <div class="mb-3">
+                <label for="inputpatronymic" class="form-label" style="margin-left: 235px">Отчество</label>
+                <input name="patronymic" type="text" class="form-control" id="inputpatronymic" aria-describedby="patronymicform" required>
+              </div>
+              <div class="mb-3">
+                <label for="inputusername" class="form-label" style="margin-left: 246px">Логин</label>
+                <input name="username" type="text" class="form-control" id="inputusername" aria-describedby="usernameform" required>
+              </div>
+              <div class="mb-3">
+                <label for="inputEmail" class="form-label" style="margin-left: 200px">Электронная почта</label>
+                <input name="email" type="email" class="form-control" id="inputEmail" aria-describedby="emailform" required>
+              </div>
+              <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label" style="margin-left: 244px">Пароль</label>
+                <input name="password" type="password" class="form-control" id="exampleInputPassword1" required>
+              </div>
+              <div class="mb-3 form-check" style="margin-left: 110px">
+                <label class="form-check-label" for="check">Будет ли пользователь администратором?</label>
+                <input name="superuser" type="checkbox" class="form-check-input" id="check">
+              </div>
+              <button type="submit" class="btn btn-primary" style="margin-left: 150px; margin-top: 10px">Зарегистрировать пользователя</button>
+            </div>
+        </form>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+	  </body>
+	</html>

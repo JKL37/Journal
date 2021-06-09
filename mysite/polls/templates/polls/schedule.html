@@ -1,0 +1,222 @@
+<!doctype html>
+	<html lang="en">
+	  <head>
+        <head>
+            <!-- Обязательные метатеги -->
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+            <!-- Bootstrap CSS -->
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+        
+            <title>Расписание</title>
+          </head>
+	  </head>
+	  <body>
+      <div class="bg-info container-fluid" style="height:55px">
+        <form method="post">
+          {% if add_flag %}
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createschedulelesson" style="float: left; margin-top: 8px;">Добавить занятие в расписание</button>
+          {% endif %}
+          <a class="btn btn-primary" href="/journal" role="button" style="margin-left: 600px; margin-top: 8px;">Вернуться к журналу</a>
+          <a class="btn btn-danger" href="/logoutpage" role="button" style="float: right; margin-top: 8px;">Выход</a>
+        </form>
+      </div>
+      <div class="modal fade" id="createschedulelesson" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Создание нового занятия в расписании</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form method="post" style="margin-top: 10px;">
+                {% csrf_token %}
+                  <div class="mb-3">
+                    <label for="InputLessonStartDate" class="form-label" style="margin-left: auto">Дата начала занятий {{min}}</label>
+                    <input name ="LessonStartDate" type="date" class="form-control" min="{{min}}" max="{{max}}" id="InputLessonStartDate" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="InputLessonFinishDate" class="form-label" style="margin-left: auto">Дата окончания занятий {{max}}</label>
+                    <input name ="LessonFinishDate" type="date" class="form-control" min="{{min}}" max="{{max}}" id="InputLessonFinishDate" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="SelectWeek" class="form-label">Учебная неделя</label>
+                    <select name = "Week" class="form-control" id="SelectWeek">
+                      <option value="1">Первая</option>
+                      <option value="2">Вторая</option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label for="SelectDayOfWeek" class="form-label">День недели</label>
+                    <select name = "DayOfWeek" class="form-control" id="SelectDayOfWeek">
+                      {% for day in daysofweek %}
+                        <option value="{{day}}">{{day}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <p>Время занятия</p>
+                    {% for time in times %}
+                      <div class="mb-3 form-check" style="margin-left: 110px">
+                        <label class="form-check-label" for="timecheck{{time.id}}">{{time.Interval}}</label>
+                        <input name="timecheck{{time.id}}" type="checkbox" class="form-check-input" id="timecheck{{time.id}}">
+                      </div>
+                    {% endfor %}
+                  </div>
+                  <div class="mb-3">
+                    <label for="SelectCourse" class="form-label">Курс</label>
+                    <select name = "course" class="form-control" id="SelectCourse">
+                      {% for course_ in courses %}
+                        {% if course_.CourseNumber == 1 %}
+                          <option value="{{course_.id}}">I</option>
+                        {% elif course_.CourseNumber == 2 %}
+                          <option value="{{course_.id}}">II</option>
+                        {% elif course_.CourseNumber == 3 %}
+                          <option value="{{course_.id}}">III</option>
+                        {% elif course_.CourseNumber == 4 %}
+                          <option value="{{course_.id}}">IV</option>
+                        {% elif course_.CourseNumber == 5 %}
+                          <option value="{{course_.id}}">м I</option>
+                        {% elif course_.CourseNumber == 6 %}
+                          <option value="{{course_.id}}">м II</option>
+                        {% elif course_.CourseNumber == 7 %}
+                          <option value="{{course_.id}}">асп</option>
+                        {% endif %}
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label for="inputGroups" class="form-label" style="margin-left: auto">Группы</label>
+                    <input name="Groups" type="text" class="form-control" id="inputGroups" aria-describedby="groupform" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="SelectTypeOfLesson" class="form-label">Тип занятия</label>
+                    <select name = "TypeOfLesson" class="form-control" id="SelectTypeOfLesson">
+                      {% for type in lessontypes %}
+                        <option value="{{type.id}}">{{type.TypeName}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label for="inputLessonName" class="form-label">Название предмета</label>
+                    <input name="LessonName" type="text" class="form-control" id="inputLessonName" aria-describedby="groupform" required>
+                  </div>
+                  <button type="submit" class="btn btn-primary" style="margin-left: 90px;">Создать занятие в расписании</button>
+            </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% if error %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>{{error}}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endif %}
+      {% if success %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>{{success}}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endif %}
+      <div class="mb-3" style="width: 100%; text-align: center;">
+        <h2>Расписание на {{semester}} {{year}} учебного года</h2>
+      </div>
+      <table class="table table-hover table-bordered border-primary">
+        <thead>
+          <tr>
+            <th rowspan="3">Неделя</th>
+            <th scope="col">Время</th>
+            <th scope="col">Понедельник</th>
+            <th scope="col">Вторник</th>
+            <th scope="col">Среда</th>
+            <th scope="col">Четверг</th>
+            <th scope="col">Пятница</th>
+            <th scope="col">Суббота</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th rowspan="7">1</th>
+          </tr>
+          {% for time in times %}
+            <tr>
+              <td>{{time.Interval}}</td>
+              {% for day in daysofweek %}
+                {% if lessons|length == 0 %}
+                  <td></td>
+                {% endif %}
+                {% for lesson in lessons %}
+                  {% if lesson.Week == 1 %}
+                    {% if lesson.DayOfWeek == day %}
+                      {% for key, value in intervals_dict.items %}
+                        {% if lesson.id == key %}
+                          {% if time.id in value %}
+                            {% for group_key, group_value in group_dict.items %}
+                              {% if group_key == lesson.id %}
+                                {% for date_key, date_value in date_dict.items %}
+                                  {% if date_key == lesson.id %}
+                                    <td>Предмет: {{lesson.LessonName}}, <br>Тип занятия: {{lesson.TypeOfLesson.TypeName}}, <br> Группы: {{group_value}} <br> с {{date_value.Start}}, по {{date_value.Finish}}</td>
+                                  {% endif %}
+                                {% endfor %}
+                              {% endif %}
+                            {% endfor %}
+                          {% else %}
+                            <td></td>
+                          {% endif %}
+                        {% endif %}
+                      {% endfor %}
+                    {% else %}
+                      <td></td>
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+              {% endfor %}
+            </tr>
+          {% endfor %}
+          <tr>
+            <th rowspan="7">2</th>
+          </tr>
+          {% for time in times %}
+            <tr>
+              <td>{{time.Interval}}</td>
+              {% for day in daysofweek %}
+                {% if lessons|length == 0 %}
+                  <td></td>
+                {% endif %}
+                {% for lesson in lessons %}
+                  {% if lesson.Week == 2 %}
+                    {% if lesson.DayOfWeek == day %}
+                      {% for key, value in intervals_dict.items %}
+                        {% if lesson.id == key %}
+                          {% if time.id in value %}
+                            {% for group_key, group_value in group_dict.items %}
+                              {% if group_key == lesson.id %}
+                                {% for date_key, date_value in date_dict.items %}
+                                  {% if date_key == lesson.id %}
+                                    <td>Предмет: {{lesson.LessonName}}, <br>Тип занятия: {{lesson.TypeOfLesson.TypeName}}, <br> Группы: {{group_value}} <br> с {{date_value.Start}}, по {{date_value.Finish}}</td>
+                                  {% endif %}
+                                {% endfor %}
+                              {% endif %}
+                            {% endfor %}
+                          {% else %}
+                            <td></td>
+                          {% endif %}
+                        {% endif %}
+                      {% endfor %}
+                    {% else %}
+                      <td></td>
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js" integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous"></script>
+	  </body>
+	</html>
